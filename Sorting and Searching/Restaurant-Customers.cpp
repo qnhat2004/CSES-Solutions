@@ -24,10 +24,8 @@ int main()
     int cur = 0, mx = 0;
     for (auto &event : events)
     {
-        if (event.second == -1)
-            cur++;
-        else
-            cur--;
+        if (event.second == -1) cur++;
+        else cur--;
         mx = max(mx, cur);
     }
     cout << mx << endl;
