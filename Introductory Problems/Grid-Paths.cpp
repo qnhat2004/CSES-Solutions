@@ -1,45 +1,65 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int dx[] = {0, 0, 1, -1};
-int dy[] = {1, -1, 0, 0};
-char dir[] = {'R', 'L', 'D', 'U'};
-string s;
-bool vis[7][7];
-int dp[7][7][49];
+int dx[] = { 1, -1, 0, 0 };
+int dy[] = { 0, 0, 1, -1 };
+char dir[] = {'D', 'U', 'R', 'L'};
 
-bool check(int x, int y) {
-    return x >= 0 && x < 7 && y >= 0 && y < 7;
+string s;
+bool vis[8][8];
+int cnt = 0;       //    Number of ways
+
+bool inbounds(int x, int y) {
+    return 1 <= x && x <= 7 && 1 <= y && y <= 7;
 }
 
-int gen(int x, int y, int pos) {
-    if (x == 6 && y == 0) {
-        if (pos == 48) return 1;
-        return 0;
+void gen(int x, int y, int i) {
+    if (x == 7 && y == 1) {
+        if (i == 48) {
+            cnt++;
+        }
+        return;
     }
 
-    if (pos == 48) return 0;
-    if (dp[x][y][pos] != -1) return dp[x][y][pos];
+    // Branch cutting
+    // Valid vertical, but invalid horizontal
+    if ((!inbounds(x + 1, y) || vis[x + 1][y]) && (!inbounds(x - 1, y) || vis[x - 1][y])) 
+        if (inbounds(x, y - 1) && !vis[x][y - 1] && inbounds(x, y + 1) && !vis[x][y + 1]) 
+            return;
+    
+    // Valid horizontal, but invalid vertical
+    if ((!inbounds(x, y + 1) || vis[x][y + 1]) && (!inbounds(x, y - 1) || vis[x][y - 1])) 
+        if (inbounds(x + 1, y) && !vis[x + 1][y] && inbounds(x - 1, y) && !vis[x - 1][y]) 
+            return;
 
     vis[x][y] = true;
-    int cnt = 0;
-    for (int i = 0; i < 4; i++) {
-        if (s[pos] == '?' || s[pos] == dir[i]) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (check(nx, ny) && !vis[nx][ny]) {
-                cnt += gen(nx, ny, pos + 1);
+
+    if (s[i] == '?') {
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k];
+            int ny = y + dy[k];
+            if (inbounds(nx, ny) && !vis[nx][ny])
+            {
+                gen(nx, ny, i + 1);
             }
         }
+    } else {
+        int k = find(dir, dir + 4, s[i]) - dir;
+        int nx = x + dx[k];
+        int ny = y + dy[k];
+        if (inbounds(nx, ny) && !vis[nx][ny])
+        {
+            gen(nx, ny, i + 1);
+        }
     }
+
     vis[x][y] = false;
-    return dp[x][y][pos] = cnt;
 }
 
 int main() {
-    cin >> s;
-    memset(dp, -1, sizeof(dp));
+    getline(cin, s);
     memset(vis, false, sizeof(vis));
-    cout << gen(0, 0, 0) << endl;
+    gen(1, 1, 0);
+    cout << cnt << endl;
     return 0;
 }
