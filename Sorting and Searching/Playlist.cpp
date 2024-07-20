@@ -10,7 +10,7 @@ int main()
         cin >> a[i];
     }   
     int l = 0, r = 0, res = 0;
-    unordered_set<long long> s;
+    set<long long> s;
     while (r < n) {
         while (s.find(a[r]) != s.end()) {
             s.erase(a[l]);
