@@ -1,40 +1,34 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n, total, check = 0, ca = 0;
-vector<int> a;
-vector<vector<int>> dp;
-
-void gen(int i, int sum) {
-    if (sum == total / 2) {
-        cout << ca << endl;
-        for (int j = 1; j <= n; j++) if (a[j] == 1) cout << j << " "; cout << endl;
-        cout << n - ca << endl; 
-        for (int j = 1; j <= n; j++) if (a[j] == 0) cout << j << " "; cout << endl;
-        check = 1;
-        return;
-    }
-    if (i > n || sum > total / 2 || check || dp[i][sum])
-        return;
-    dp[i][sum] = 1;
-    a[i] = 1;
-    ca++;
-    gen(i + 1, sum + i);
-    a[i] = 0;
-    ca--;
-    gen(i + 1, sum);
-}
-
 int main()
 {
+    int n;
     cin >> n;
-    total = n * (n + 1) / 2;
-    a.resize(n + 5);
-    dp.resize(n + 1, vector<int>(total));
-    if (total & 1) cout << "NO" << endl;
-    else {
+    long long total = n * (n + 1) / 2;
+    if (total & 1) {
+        cout << "NO\n";
+        return 0;
+    } 
+    vector<int> set1, set2;
+    long long sum1 = 0, sum2 = 0;
+    for (int i = n; i >= 1; i--) {
+        if (sum1 <= sum2) {
+            set1.push_back(i);
+            sum1 += i;
+        } else {
+            set2.push_back(i);
+            sum2 += i;
+        }
+    }
+    if (sum1 != sum2) {
+        cout << "NO\n";
+    } else {
         cout << "YES\n";
-        gen(1, 0);
+        cout << set1.size() << endl;
+        for (auto &i : set1) cout << i << " "; cout << endl;
+        cout << set2.size() << endl;
+        for (auto &i : set2) cout << i << " ";
     }
     return 0;
 }
